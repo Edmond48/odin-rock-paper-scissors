@@ -26,31 +26,38 @@ function playRound(playerSelection, computerSelection) {
             resultStr = `You lose! ${computerSelection} beats ${playerSelection}`;
         }
     }
-    
+
     return resultStr;    
 }
 
-function game() {
-    let playerScore = 0;
-    let computerScore = 0;
+function handleClickButton(e) {
+    let result = playRound(e.target.id, getComputerChoice());
+    if (result.includes("win"))
+        playerScore++;
+    else if (result.includes("lose"))
+        computerScore++;
+    let score = document.querySelector('.score');
+    score.textContent = `${playerScore}-${computerScore}`;
+    document.querySelector('.round-result').textContent = result;
 
-    for (let i = 0; i < 5; i++) {
-        const userChoice = prompt("Please enter your choice", "Rock");
-        const result = playRound(userChoice, getComputerChoice());
-        if (result.includes("win")) {
-            playerScore++;
-        }
-        else if (result.includes("lose")) {
-            computerScore++;
-        }
-        console.log(result);
+    if (playerScore >= 5 || computerScore >= 5) {
+        let result = document.querySelector('.round-result');
+        if (playerScore > computerScore)
+            result.textContent = "You win!";
+        else if (playerScore < computerScore)
+            result.textContent = "Computer wins!";
+        else
+            result.textContent = "Draw";
+        document.querySelectorAll('.choice').
+            forEach(button => button.removeEventListener('click', handleClickButton));
     }
-
-    if (playerScore == computerScore)
-        console.log("It's a draw");
-    else if (playerScore > computerScore)
-        console.log("You win");
-    else
-        console.log("You lose");
-    console.log("Final score: " + playerScore + "-" + computerScore);
 }
+
+const buttons = document.querySelectorAll('.choice');
+
+let playerScore = 0;
+let computerScore = 0;
+
+buttons.forEach((button) => {
+    button.addEventListener('click', handleClickButton);
+})
